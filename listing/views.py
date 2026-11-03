@@ -64,20 +64,19 @@ class ManageListingView(APIView):
             bathrooms = 1.0
         bathrooms = round(bathrooms,1)
         
-        sale_type  = data['sale_type']
+        sale_type = data['sale_type']
         if sale_type == 'FOR_RENT':
-            sale_type = 'For Rent'
+            sale_type = Listing.SaleType.FOR_RENT
         else:
-            sale_type = 'For Sale'
-        
-        home_type  = data['home_type']
-        
+            sale_type = Listing.SaleType.FOR_SALE
+
+        home_type = data['home_type']
         if home_type == 'CONDO':
-            home_type = ' Condo'
+            home_type = Listing.HomeType.CONDO
         elif home_type == 'TOWNHOUSE':
-            home_type = 'Townhouse'
+            home_type = Listing.HomeType.TOWNHOUSE
         else:
-            home_type = 'House'
+            home_type = Listing.HomeType.HOUSE
         
         main_photo  = data['main_photo']
         photo_1  = data['photo_1']
@@ -156,6 +155,20 @@ class ManageListingView(APIView):
                 description = data['desription'],
                 price = data['price'],
                 bedrooms = data['bedrooms'],
+        sale_type  = data['sale_type']
+        if sale_type == 'FOR_RENT':
+            sale_type = 'For Rent'
+        else:
+            sale_type = 'For Sale'
+        
+        home_type  = data['home_type']
+        
+        if home_type == 'CONDO':
+            home_type = ' Condo'
+        elif home_type == 'TOWNHOUSE':
+            home_type = 'Townhouse'
+        else:
+            home_type = 'House'
                 bathrooms = data['bathrooms'],
                 sale_type = data['sale_type'],
                 home_type = data['home_type'],
@@ -349,9 +362,9 @@ class SearchListingView(APIView):
             
             bathrooms = 1.0 if (bathrooms < 0 or bathrooms >= 10) else bathrooms
             
-            sale_type = 'For Sale' if 'sale' in request.query_params.get('sale_type').lower() else 'For Rent'
+            sale_type = Listing.SaleType.FOR_SALE if 'sale' in request.query_params.get('sale_type').lower() else Listing.SaleType.FOR_RENT
             home_type = request.query_params.get('home_type').upper()
-            home_type = 'House' if home_type == 'HOUSE' else 'Condo' if home_type == 'CONDO' else 'Townhouse'
+            home_type = Listing.HomeType.HOUSE if home_type == 'HOUSE' else Listing.HomeType.CONDO if home_type == 'CONDO' else Listing.HomeType.TOWNHOUSE
             
             vector = SearchVector('title','description')
             query = SearchQuery(search)
