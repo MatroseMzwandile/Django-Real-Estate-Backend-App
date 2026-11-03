@@ -350,10 +350,10 @@ class SearchListingView(APIView):
             bathrooms = 1.0 if (bathrooms < 0 or bathrooms >= 10) else bathrooms
             
             sale_type = 'For Sale' if 'sale' in request.query_params.get('sale_type').lower() else 'For Rent'
-            home_type = request.query_params.get('sale_type').upper()
+            home_type = request.query_params.get('home_type').upper()
             home_type = 'House' if home_type == 'HOUSE' else 'Condo' if home_type == 'CONDO' else 'Townhouse'
             
-            vector = SearchVector('title','desciption')
+            vector = SearchVector('title','description')
             query = SearchQuery(search)
             
             if not Listing.objects.annotate(
