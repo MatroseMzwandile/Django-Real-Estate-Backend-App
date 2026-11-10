@@ -18,7 +18,15 @@ A learning project to explore Django, cloud storage (AWS S3) and full-stack fram
 
 ## Tech stack
 
-Python, Django, Django REST Framework, SimpleJWT, PostgreSQL, Pillow
+Python, Django, Django REST Framework, SimpleJWT, PostgreSQL, Pillow, drf-spectacular (OpenAPI/Swagger)
+
+## API Documentation
+
+Interactive API documentation is generated using [drf-spectacular](https://github.com/tfranzel/drf-spectacular) (OpenAPI 3.0):
+
+- **Swagger UI**: [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
+- **Redoc**: [http://127.0.0.1:8000/api/redoc/](http://127.0.0.1:8000/api/redoc/)
+- **OpenAPI Schema (JSON)**: [http://127.0.0.1:8000/api/schema/](http://127.0.0.1:8000/api/schema/)
 
 ## API endpoints
 
@@ -33,6 +41,9 @@ Python, Django, Django REST Framework, SimpleJWT, PostgreSQL, Pillow
 | GET | `/api/listing/search` | Public | Search and filter published listings |
 | GET | `/api/listing/detail?slug=...` | JWT | One published listing |
 | GET / POST / PUT / PATCH / DELETE | `/api/listing/manage` | JWT (realtor) | Manage your own listings |
+| GET | `/api/schema/` | Public | Download raw OpenAPI schema |
+| GET | `/api/docs/` | Public | Interactive Swagger UI documentation |
+| GET | `/api/redoc/` | Public | Alternative Redoc API documentation |
 
 Send the access token as `Authorization: Bearer <token>`.
 
