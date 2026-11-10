@@ -16,25 +16,16 @@ class RegisterView(APIView):
             email = data['email'].lower()
             password = data['password']
             re_password = data['re_password']
-            is_realtor = bool(data['is_realtor'] == 'True')
             
             if password == re_password:
                 if len(password) >= 8:
                     if not User.objects.filter(email=email).exists():
-                        if not is_realtor:
-                            User.objects.create_user(name=name,email=email,password=password)
-                            
-                            return Response(
-                                {'success': 'User created succesfully'},
-                                status=status.HTTP_201_CREATED
-                            )
-                        else:
-                            User.objects.create_realtor(name=name,email=email,password=password)
-                            
-                            return Response(
-                                {'success': 'Realtor account created succesfully'},
-                                status=status.HTTP_201_CREATED
-                            )
+                        User.objects.create_user(name=name,email=email,password=password)
+
+                        return Response(
+                            {'success': 'User created succesfully'},
+                            status=status.HTTP_201_CREATED
+                        )
                     else:
                         return Response(
                             {'error': 'User with this email already exists'},
