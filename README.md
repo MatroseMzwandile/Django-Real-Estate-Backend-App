@@ -83,6 +83,41 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+## Run with Docker
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/MatroseMzwandile/Django-Real-Estate-Backend-App.git
+cd Django-Real-Estate-Backend-App
+```
+
+### 2. Build and start the containers:
+
+```bash
+docker compose up --build -d
+```
+(PostgreSQL will initialize both users_db and listings_db automatically).
+
+### 3. Run database migrations for both databases:
+
+```bash
+docker compose exec web python manage.py migrate --database=users
+docker compose exec web python manage.py migrate --database=listings
+```
+
+### 4. Create a superuser (optional):
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+### 5. Stop containers:
+
+```bash
+docker compose down
+```
+
 ## Project structure
 
 ```
@@ -107,9 +142,9 @@ Tracked in [Issues](../../issues). Main items:
 - [ ] Restrict who can register as a realtor
 - [ ] Add automated tests
 - [ ] Move validation into DRF serializers
-- [ ] Add API documentation (Swagger / OpenAPI)
+- [X] Add API documentation (Swagger / OpenAPI)
 - [ ] Build a frontend (Next.js or React)
-- [ ] Docker support
+- [X] Docker support
 
 ## Author
 
