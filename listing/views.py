@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from .serializers import ListingSerializer
 from django.contrib.postgres.search import SearchVector, SearchQuery
-
+from .pagination import ListingPagination
 
 class ManageListingView(APIView):
     def get(self, request, format=None):
@@ -313,15 +313,20 @@ class ListingsView(APIView):
     
     def get(self, request, format=None):
         try:
-            if not Listing.objects.filter(is_published=True):
+            listings = Listing.objects.order_by('-date_created').filter(is_published=True)
+            
+            if not listings.exists():
                 return Response({'error': 'No listings in database'}, status=status.HTTP_404_NOT_FOUND)
         
-            listings = Listing.objects.order_by('-date_created').filter(is_published=True)
-            listings = ListingSerializer(listings, many=True)
+            paginator = ListingPagination()
+            page = paginator.paginate_queryset(listings, request)
             
-            return Response(
-                {'listings': listings.data}, status=status.HTTP_200_OK
-            )
+            if page is not None:
+                serializer = ListingSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            
+            serializer = ListingSerializer(listings, many=True)
+            return Response({'listings': serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -331,7 +336,6 @@ class SearchListingView(APIView):
     
     def get(self, request, format=None):
         try:
-            
             city = request.query_params.get('city')
             state = request.query_params.get('state')
                     
@@ -356,24 +360,10 @@ class SearchListingView(APIView):
             vector = SearchVector('title','desciption')
             query = SearchQuery(search)
             
-            if not Listing.objects.annotate(
-                search=vector
-                ).filter(
-                search=query,
-                city=city,
-                state=state,
-                price__lte=max_price,
-                bedrooms__gte=bedrooms,
-                bathrooms__gte=bathrooms,
-                sale_type=sale_type,
-                home_type=home_type,
-                is_published=True,
-                ).exists():
-                    return Response({'error': 'No listings found with this criteria'},status=status.HTTP_404_NOT_FOUND)
-                
+            # Query and filter published listings matching criteria
             listings = Listing.objects.annotate(
                 search=vector
-                ).filter(
+            ).filter(
                 search=query,
                 city=city,
                 state=state,
@@ -383,10 +373,21 @@ class SearchListingView(APIView):
                 sale_type=sale_type,
                 home_type=home_type,
                 is_published=True,
-                )
+            )
+            
+            if not listings.exists():
+                return Response({'error': 'No listings found with this criteria'}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Apply pagination
+            paginator = ListingPagination()
+            page = paginator.paginate_queryset(listings, request)
+            
+            if page is not None:
+                serializer = ListingSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
                 
-            listings = ListingSerializer(listings, many=True)
-            return Response({'listings': listings.data}, status=status.HTTP_200_OK )
+            serializer = ListingSerializer(listings, many=True)
+            return Response({'listings': serializer.data}, status=status.HTTP_200_OK)
             
         except Exception as e:
-            return Response( {'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR )
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
