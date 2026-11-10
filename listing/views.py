@@ -49,7 +49,7 @@ class ManageListingView(APIView):
         city  = data['city']
         state  = data['state']
         zipcode  = data['zipcode']
-        desription  = data['description']
+        description  = data['description']
         
         try: price = int(data['price'])
         except: return -1
@@ -66,14 +66,14 @@ class ManageListingView(APIView):
         
         sale_type  = data['sale_type']
         if sale_type == 'FOR_RENT':
-            sale_type = 'For Rent'
+            sale_type = 'For rent'
         else:
-            sale_type = 'For Sale'
-        
+            sale_type = 'For sale'
+
         home_type  = data['home_type']
-        
+
         if home_type == 'CONDO':
-            home_type = ' Condo'
+            home_type = 'Condo'
         elif home_type == 'TOWNHOUSE':
             home_type = 'Townhouse'
         else:
@@ -97,7 +97,7 @@ class ManageListingView(APIView):
             'city': city,
             'state':state,
             'zipcode':zipcode,
-            'description':desription,
+            'description':description,
             'price':price,
             'bedrooms':bedrooms,
             'bathrooms':bathrooms,
@@ -109,6 +109,8 @@ class ManageListingView(APIView):
             'photo_3':photo_3,
             'is_published':is_published,
         }
+
+        return data
         
     def post(self, request):
         try:
@@ -153,7 +155,7 @@ class ManageListingView(APIView):
                 city = data['city'],
                 state = data['state'],
                 zipcode = data['zipcode'],
-                description = data['desription'],
+                description = data['description'],
                 price = data['price'],
                 bedrooms = data['bedrooms'],
                 bathrooms = data['bathrooms'],
@@ -214,7 +216,7 @@ class ManageListingView(APIView):
                 city = data['city'],
                 state = data['state'],
                 zipcode = data['zipcode'],
-                description = data['desription'],
+                description = data['description'],
                 price = data['price'],
                 bedrooms = data['bedrooms'],
                 bathrooms = data['bathrooms'],
@@ -353,11 +355,16 @@ class SearchListingView(APIView):
             
             bathrooms = 1.0 if (bathrooms < 0 or bathrooms >= 10) else bathrooms
             
-            sale_type = 'For Sale' if 'sale' in request.query_params.get('sale_type').lower() else 'For Rent'
-            home_type = request.query_params.get('sale_type').upper()
+            sale_type_param = request.query_params.get('sale_type')
+            home_type_param = request.query_params.get('home_type')
+            if not sale_type_param or not home_type_param:
+                return Response({'error': 'Must pass sale_type and home_type'}, status=status.HTTP_400_BAD_REQUEST )
+
+            sale_type = 'For sale' if 'sale' in sale_type_param.lower() else 'For rent'
+            home_type = home_type_param.upper()
             home_type = 'House' if home_type == 'HOUSE' else 'Condo' if home_type == 'CONDO' else 'Townhouse'
             
-            vector = SearchVector('title','desciption')
+            vector = SearchVector('title','description')
             query = SearchQuery(search)
             
             # Query and filter published listings matching criteria
