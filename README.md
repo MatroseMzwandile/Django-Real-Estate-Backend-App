@@ -140,7 +140,7 @@ Tracked in [Issues](../../issues). Main items:
 
 - [ ] Fix search and sale/home type bugs
 - [ ] Restrict who can register as a realtor
-- [ ] Add automated tests
+- [X] Add automated tests
 - [ ] Move validation into DRF serializers
 - [X] Add API documentation (Swagger / OpenAPI)
 - [ ] Build a frontend (Next.js or React)
