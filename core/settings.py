@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'rest_framework',
     'drf_spectacular',
+    'corsheaders',
     'user',
     'listing',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -156,3 +158,10 @@ SPECTACULAR_SETTINGS = {
 }
 
 AUTH_USER_MODEL = 'user.UserAccount'
+
+# CORS: origins allowed to call this API from a browser (the Next.js frontend)
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+    if origin.strip()
+]
