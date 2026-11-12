@@ -44,6 +44,8 @@ Interactive API documentation is generated using [drf-spectacular](https://githu
 | GET | `/api/schema/` | Public | Download raw OpenAPI schema |
 | GET | `/api/docs/` | Public | Interactive Swagger UI documentation |
 | GET | `/api/redoc/` | Public | Alternative Redoc API documentation |
+| GET | `/api/listing/get-listings?page=1&page_size=10` | Public | Paginated published listings, newest first |
+| GET | `/api/listing/search?search=...&page=1` | Public | Paginated search and filter results |
 
 Send the access token as `Authorization: Bearer <token>`.
 
